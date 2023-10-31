@@ -1,8 +1,0 @@
-builders:
-  the_asset_builder:
-    import: "package:the_asset_builder/asset_builder_generator.dart"
-    builder_factories: ["assetBuilder"]
-    build_extensions: {".dart": [".g.dart"]}
-    auto_apply: dependents
-    build_to: source
-
