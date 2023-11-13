@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:projects/animated_gradient_text/animated_screen.dart';
 import 'package:projects/arc_selector/age_range_selector.dart';
 import 'package:projects/arc_selector/arc_selector_home.dart';
 import 'package:projects/rainbow_list/rainbow_list_home.dart';
@@ -21,28 +22,50 @@ class HomePage extends StatelessWidget {
               title: const Text("Rainbow List"),
               trailing: const Icon(Icons.arrow_forward_ios),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const RainbowListHome()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const RainbowListHome()));
               },
             ),
             ListTile(
               title: const Text("Registration Process"),
               trailing: const Icon(Icons.arrow_forward_ios),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const RegistrationProcess()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const RegistrationProcess()));
               },
             ),
             ListTile(
               title: const Text("Arc Selector"),
               trailing: const Icon(Icons.arrow_forward_ios),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const ArcSelectorHome()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ArcSelectorHome()));
               },
             ),
             ListTile(
               title: const Text("Age Range Selector"),
               trailing: const Icon(Icons.arrow_forward_ios),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => AgeRangeSelector()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => AgeRangeSelector()));
+              },
+            ),
+            ListTile(
+              title: const Text("Animated Gradient Text"),
+              trailing: const Icon(Icons.arrow_forward_ios),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => AnimatedGradientTextScreen()));
               },
             ),
           ],
