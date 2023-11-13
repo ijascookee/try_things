@@ -19,9 +19,7 @@ class _AnimatedScreenState extends State<AnimatedGradientTextScreen> {
       ),
       body: Center(
         child: AnimatedGradientTextWidget(
-          titleStyle: TextStyle(fontSize: 120,
-          
-          ),
+          titleStyle: TextStyle(fontSize: 120, fontWeight: FontWeight.w900),
           stops: [
             45,
             40,

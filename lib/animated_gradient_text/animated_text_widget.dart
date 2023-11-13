@@ -84,9 +84,11 @@ class _SplashScreenState extends State<AnimatedGradientTextWidget>
           },
           blendMode: BlendMode.srcIn,
           child: Text(
+            
             word,
             textAlign: TextAlign.center,
             style: widget.titleStyle,
+          
           ),
         );
       },
