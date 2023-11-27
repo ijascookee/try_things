@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:projects/arc_selector/age_range_selector.dart';
 import 'package:projects/arc_selector/arc_selector_home.dart';
+import 'package:projects/arc_slider/arc_slider.dart';
+import 'package:projects/arc_slider/arc_slider_example.dart';
 import 'package:projects/rainbow_list/rainbow_list_home.dart';
 import 'package:projects/registration_progress/progress_registration.dart';
+import 'package:projects/youtube_video_player/youtube_video_player.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -43,6 +46,20 @@ class HomePage extends StatelessWidget {
               trailing: const Icon(Icons.arrow_forward_ios),
               onTap: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => AgeRangeSelector()));
+              },
+            ),
+            ListTile(
+              title: const Text("Youtube Video Player"),
+              trailing: const Icon(Icons.arrow_forward_ios),
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => YoutubeVideoPlayerPage()));
+              },
+            ),
+            ListTile(
+              title: const Text("Arc Slider"),
+              trailing: const Icon(Icons.arrow_forward_ios),
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ArcSliderExample()));
               },
             ),
           ],

@@ -30,6 +30,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  dobo_widgets:
+    git: git@github.ijas:app-cookee/dobo_widgets.git
+  # youtube_player_iframe: ^4.0.4
+  the_youtube_player:
+    git: https://github.com/app-cookee/the_youtube_player
 
 
   # The following adds the Cupertino Icons font to your application.
