@@ -42,11 +42,24 @@ jobs:
       - name: Start Android Release Build
         run: flutter build appbundle
 
+      - name: Extract Package Name and Version
+        id: extract_info
+        run: |
+          PACKAGE_NAME=$(grep -Po "applicationId\s+['\"]\K[^'\"]+" android/app/build.gradle)
+          VERSION_NAME=$(grep -Po "version:\s+['\"]\K[^'\"]+" pubspec.yaml | cut -d '+' -f 1)
+          BUILD_NUMBER=$(grep -Po "version:\s+['\"]\K[^'\"]+" pubspec.yaml | cut -d '+' -f 2)
+          FILE_NAME="${PACKAGE_NAME}.v${VERSION_NAME}+${BUILD_NUMBER}.aab"
+          echo "FILE_NAME=$FILE_NAME" >> $GITHUB_ENV
+          echo "::set-output name=FILE_NAME::$FILE_NAME"
+
+      - name: Rename Build File
+        run: mv build/app/outputs/bundle/release/app-release.aab build/app/outputs/bundle/release/${{ steps.extract_info.outputs.FILE_NAME }}
+
       - name: Upload Android Release
         uses: actions/upload-artifact@v3
         with:
           name: android-release
-          path: build/app/outputs/bundle/release/app-release.aab
+          path: build/app/outputs/bundle/release/${{ steps.extract_info.outputs.FILE_NAME }}
 
   # deploy:
   #   name: Deploy Android Build
