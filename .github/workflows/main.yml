@@ -62,8 +62,6 @@ jobs:
           FILE_NAME="${PACKAGE_NAME}.v${VERSION_NAME}+${BUILD_NUMBER}.aab"
           echo "FILE_NAME=$FILE_NAME" >> $GITHUB_ENV
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
-          echo "FILE_NAME=${FILE_NAME}" >> $GITHUB_ENV
-          echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_ENV
 
 
       - name: Rename BUNDLE File
