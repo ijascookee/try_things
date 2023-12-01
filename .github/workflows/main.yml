@@ -46,20 +46,36 @@ jobs:
         id: extract_info
         run: |
           PACKAGE_NAME=$(grep -Po "applicationId\s+['\"]\K[^'\"]+" android/app/build.gradle)
-          VERSION_NAME=$(grep -Po "version:\s+['\"]\K[^'\"]+" pubspec.yaml | cut -d '+' -f 1)
-          BUILD_NUMBER=$(grep -Po "version:\s+['\"]\K[^'\"]+" pubspec.yaml | cut -d '+' -f 2)
+          VERSION_NAME=$(grep -Po "version: \K\d+\.\d+\.\d+" pubspec.yaml)
+          BUILD_NUMBER=$(grep -Po "version: \K\d+\.\d+\.\d+\+\K\d+" pubspec.yaml)
           FILE_NAME="${PACKAGE_NAME}.v${VERSION_NAME}+${BUILD_NUMBER}.aab"
           echo "FILE_NAME=$FILE_NAME" >> $GITHUB_ENV
           echo "::set-output name=FILE_NAME::$FILE_NAME"
 
       - name: Rename Build File
-        run: mv build/app/outputs/bundle/release/app-release.aab build/app/outputs/bundle/release/${{ steps.extract_info.outputs.FILE_NAME }}
+        run: |
+          mv build/app/outputs/bundle/release/app-release.aab build/app/outputs/bundle/release/${{ steps.extract_info.outputs.FILE_NAME }}
 
-      - name: Upload Android Release
-        uses: actions/upload-artifact@v3
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: android-release
-          path: build/app/outputs/bundle/release/${{ steps.extract_info.outputs.FILE_NAME }}
+          tag_name: ${{ steps.extract_info.outputs.VERSION_NAME }}
+          release_name: Release ${{ steps.extract_info.outputs.VERSION_NAME }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./build/app/outputs/bundle/release/${{ steps.extract_info.outputs.FILE_NAME }}
+          asset_name: ${{ steps.extract_info.outputs.FILE_NAME }}
+          asset_content_type: application/octet-stream
 
   # deploy:
   #   name: Deploy Android Build
