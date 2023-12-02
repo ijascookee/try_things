@@ -66,17 +66,17 @@ jobs:
       - name: Rename BUNDLE File
       
         run: |
-         echo "Renaming to ${FILE_NAME}" 
-         mv build/app/outputs/bundle/release/app-release.aab build/app/outputs/bundle/release/$FILE_NAME.aab
+         echo "Renaming to ${{env.FILE_NAME}}" 
+         mv build/app/outputs/bundle/release/app-release.aab build/app/outputs/bundle/release/${{env.FILE_NAME}}.aab
       - name: Rename APK File
-        run: mv build/app/outputs/apk/release/app-release.apk build/app/outputs/apk/release/$FILE_NAME.apk
+        run: mv build/app/outputs/apk/release/app-release.apk build/app/outputs/apk/release/${{env.FILE_NAME}}.apk
 
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            build/app/outputs/bundle/release/$FILE_NAME.aab
-            build/app/outputs/apk/release/$FILE_NAME.apk
+            build/app/outputs/bundle/release/${{env.FILE_NAME}}.aab
+            build/app/outputs/apk/release/${{env.FILE_NAME}}.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
