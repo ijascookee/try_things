@@ -77,7 +77,6 @@ jobs:
 
       - name: Release
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
             build/app/outputs/bundle/release/${{ steps.extract_info.outputs.FILE_NAME }}
