@@ -24,21 +24,21 @@ class _SliderGradientButtonState extends State<SliderGradientButton> {
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) =>
-                      AnimatedGradientTextScreen(), // Replace YourNewPage with the actual page you want to navigate to
+                      const AnimatedGradientTextScreen(), // Replace YourNewPage with the actual page you want to navigate to
                 ),
               );
             },
             text: 'Get Started',
-            borderRadius: BorderRadius.only(
+            borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(32), bottomLeft: Radius.circular(32)),
             textColor: Colors.black,
             // borderRadius: ,
-            icon: Icon(Icons.star),
-            innerGradient: LinearGradient(colors: [
+            icon: const Icon(Icons.star),
+            innerGradient: const LinearGradient(colors: [
               Color(0XFFFF0063),
               Color(0XFF19ACFB),
             ]),
-            outerGradient: LinearGradient(colors: [Colors.white, Colors.white]),
+            outerGradient: const LinearGradient(colors: [Colors.white, Colors.white]),
           ),
         ),
       ),
