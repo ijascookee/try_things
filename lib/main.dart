@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:projects/home.dart';
+import 'package:the_responsive_builder/the_responsive_builder.dart';
 
-void main(){
+void main() {
   runApp(const MyApp());
 }
 
@@ -10,8 +11,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: HomePage(),
-    );
+    return TheResponsiveBuilder(builder: (context, orientation, screenType) {
+      return MaterialApp(
+        home: HomePage(),
+      );
+    });
   }
 }
