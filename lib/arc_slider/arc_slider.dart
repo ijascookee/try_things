@@ -1,22 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_gauges/gauges.dart';
+import 'dart:math' as math;
 
-class ArcSlider extends StatelessWidget {
-  ArcSlider({
-    Key? key,
-    required this.onChange,
-    this.initialValue = 0.0,
-    this.width,
-    this.minimumValue,
-    this.maxiumValue,
-    this.trackColor,
-    this.trackThickness,
-    this.trackFillColor,
-    this.thumbColor,
-    this.thumbBorderColor,
-    this.thumbSize,
-  }) : super(key: key);
-
+class ArcSlider extends StatefulWidget {
   final Function(double value) onChange;
   final double initialValue;
   final double? width;
@@ -29,72 +14,172 @@ class ArcSlider extends StatelessWidget {
   final Color? thumbBorderColor;
   final double? thumbSize;
 
-  late ValueNotifier<double> valueListener = ValueNotifier(initialValue);
+  const ArcSlider({
+    Key? key,
+    required this.onChange,
+    this.initialValue = 0.0,
+    this.width,
+    this.minimumValue = 0.0,
+    this.maxiumValue = 100.0,
+    this.trackColor = Colors.black12,
+    this.trackThickness = 10.0,
+    this.trackFillColor = Colors.red,
+    this.thumbColor = Colors.red,
+    this.thumbBorderColor = Colors.white,
+    this.thumbSize = 30.0,
+  }) : super(key: key);
+
+  @override
+  State<ArcSlider> createState() => _ArcSliderState();
+}
+
+class _ArcSliderState extends State<ArcSlider> {
+  double _currentValue = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentValue = widget.initialValue;
+  }
+
+  void _updateValue(Offset localPosition, Size size) {
+    final double radius = size.width - (size.width / 4);
+    final Offset centerPoint = Offset(size.width / 2, radius);
+    final double angle = math.atan2(localPosition.dy - centerPoint.dy, localPosition.dx - centerPoint.dx);
+
+    const double startAngle = -4.3 * math.pi / 6;
+    const double sweepAngle = 2.6 * math.pi / 6;
+    const double endAngle = startAngle + sweepAngle;
+
+    if (angle >= startAngle && angle <= endAngle) {
+      final double fraction = (angle - startAngle) / sweepAngle;
+      final double newValue = widget.minimumValue! + fraction * (widget.maxiumValue! - widget.minimumValue!);
+
+      setState(() {
+        _currentValue = newValue;
+      });
+      widget.onChange(newValue);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: width ?? MediaQuery.of(context).size.width,
-      child: LayoutBuilder(builder: (context, constraints) {
-        var cWidth = constraints.maxWidth;
-        var cHeight = constraints.maxHeight;
-        return SizedBox(
-          height: cWidth / 2,
-          width: cWidth,
-          child: Stack(
-            clipBehavior: Clip.none,
+      width: widget.width ?? MediaQuery.of(context).size.width / 1,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          var cWidth = constraints.maxWidth;
+          return Stack(
             children: [
-              ValueListenableBuilder(
-                valueListenable: valueListener,
-                builder: (context, value, _) {
-                  return SfRadialGauge(
-                    axes: <RadialAxis>[
-                      RadialAxis(
-                        minimum: minimumValue ?? 0,
-                        maximum: maxiumValue ?? 100,
-                        startAngle: 240,
-                        endAngle: -60,
-                        centerY: 2.3,
-                        showLabels: false,
-                        showTicks: false,
-                        radiusFactor: 4,
-                        axisLineStyle: AxisLineStyle(
-                          cornerStyle: CornerStyle.bothCurve,
-                          color: trackColor ?? Colors.black12,
-                          thickness: trackThickness ?? 10,
-                        ),
-                        pointers: <GaugePointer>[
-                          RangePointer(
-                            value: value,
-                            cornerStyle: CornerStyle.bothCurve,
-                            width: trackThickness ?? 10,
-                            sizeUnit: GaugeSizeUnit.logicalPixel,
-                            color: trackFillColor ?? Colors.red,
-                          ),
-                          MarkerPointer(
-                            value: value,
-                            enableDragging: true,
-                            onValueChanged: (val) {
-                              valueListener.value = val;
-                              onChange(val);
-                            },
-                            markerHeight: thumbSize ?? 30,
-                            markerWidth: thumbSize ?? 30,
-                            markerType: MarkerType.circle,
-                            color: thumbColor ?? Colors.red,
-                            borderWidth: 2,
-                            borderColor: thumbBorderColor ?? Colors.white,
-                          )
-                        ],
-                      )
-                    ],
-                  );
+              GestureDetector(
+                onPanUpdate: (details) {
+                  final RenderBox box = context.findRenderObject() as RenderBox;
+                  final Offset localPosition = box.globalToLocal(details.globalPosition);
+                  final Size size = box.size;
+                  _updateValue(localPosition, size);
                 },
+                child: Padding(
+                  padding: EdgeInsets.all(cWidth / 20),
+                  child: CustomPaint(
+                    painter: ArcSliderPainter(
+                      trackColor: widget.trackColor!,
+                      trackThickness: widget.trackThickness!,
+                      trackFillColor: widget.trackFillColor!,
+                      thumbColor: widget.thumbColor!,
+                      thumbBorderColor: widget.thumbBorderColor!,
+                      thumbSize: widget.thumbSize!,
+                      value: _currentValue,
+                      minValue: widget.minimumValue!,
+                      maxValue: widget.maxiumValue!,
+                      radius: cWidth - (cWidth / 4),
+                    ),
+                    size: Size(constraints.maxWidth, constraints.maxWidth / 4),
+                  ),
+                ),
               ),
+              Positioned(
+                bottom: 0,
+                child: Container(
+                  color: Colors.transparent,
+                  width: MediaQuery.of(context).size.width,
+                  height: cWidth / 10,
+                ),
+              )
             ],
-          ),
-        );
-      }),
+          );
+        },
+      ),
     );
   }
+}
+
+class ArcSliderPainter extends CustomPainter {
+  final double value;
+  final double minValue;
+  final double maxValue;
+  final Color trackColor;
+  final double trackThickness;
+  final Color trackFillColor;
+  final Color thumbColor;
+  final Color thumbBorderColor;
+  final double thumbSize;
+  final double radius;
+
+  ArcSliderPainter({
+    required this.value,
+    required this.minValue,
+    required this.maxValue,
+    required this.trackColor,
+    required this.trackThickness,
+    required this.trackFillColor,
+    required this.thumbColor,
+    required this.thumbBorderColor,
+    required this.thumbSize,
+    required this.radius,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint trackPaint = Paint()
+      ..color = trackColor
+      ..strokeCap = StrokeCap.round
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = trackThickness;
+
+    final Paint trackFillPaint = Paint()
+      ..color = trackFillColor
+      ..strokeCap = StrokeCap.round
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = trackThickness;
+
+    final Paint thumbPaint = Paint()
+      ..color = thumbColor
+      ..strokeCap = StrokeCap.round
+      ..style = PaintingStyle.fill;
+
+    final Paint thumbBorderPaint = Paint()
+      ..color = thumbBorderColor
+      ..strokeCap = StrokeCap.round
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2;
+
+    const double startAngle = -4.3 * math.pi / 6;
+    const double sweepAngle = 2.6 * math.pi / 6;
+    final double fraction = (value - minValue) / (maxValue - minValue);
+    final double thumbAngle = startAngle + fraction * sweepAngle;
+
+    final Rect arcRect = Rect.fromCircle(center: Offset(size.width / 2, radius), radius: radius);
+    canvas.drawArc(arcRect, startAngle, sweepAngle, false, trackPaint);
+    canvas.drawArc(arcRect, startAngle, thumbAngle - startAngle, false, trackFillPaint);
+
+    final Offset thumbCenter = Offset(
+      size.width / 2 + math.cos(thumbAngle) * radius,
+      radius + math.sin(thumbAngle) * radius,
+    );
+    canvas.drawCircle(thumbCenter, thumbSize / 2, thumbPaint);
+    canvas.drawCircle(thumbCenter, thumbSize / 2, thumbBorderPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
