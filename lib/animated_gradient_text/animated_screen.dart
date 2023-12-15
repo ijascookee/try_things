@@ -13,11 +13,11 @@ class _AnimatedScreenState extends State<AnimatedGradientTextScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Animated Gradient Text Screen',
         ),
       ),
-      body: Center(
+      body: const Center(
         child: AnimatedGradientTextWidget(
           titleStyle: TextStyle(fontSize: 120, fontWeight: FontWeight.w900),
           stops: [

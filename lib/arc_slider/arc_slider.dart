@@ -6,7 +6,7 @@ class ArcSlider extends StatefulWidget {
   final double initialValue;
   final double? width;
   final double? minimumValue;
-  final double? maxiumValue;
+  final double? maximumValue;
   final Color? trackColor;
   final double? trackThickness;
   final Color? trackFillColor;
@@ -20,7 +20,7 @@ class ArcSlider extends StatefulWidget {
     this.initialValue = 0.0,
     this.width,
     this.minimumValue = 0.0,
-    this.maxiumValue = 100.0,
+    this.maximumValue = 100.0,
     this.trackColor = Colors.black12,
     this.trackThickness = 10.0,
     this.trackFillColor = Colors.red,
@@ -34,12 +34,12 @@ class ArcSlider extends StatefulWidget {
 }
 
 class _ArcSliderState extends State<ArcSlider> {
-  double _currentValue = 0;
+  final ValueNotifier<double> _currentValueNotifier = ValueNotifier(0);
 
   @override
   void initState() {
     super.initState();
-    _currentValue = widget.initialValue;
+    _currentValueNotifier.value = widget.initialValue;
   }
 
   void _updateValue(Offset localPosition, Size size) {
@@ -53,34 +53,31 @@ class _ArcSliderState extends State<ArcSlider> {
 
     if (angle >= startAngle && angle <= endAngle) {
       final double fraction = (angle - startAngle) / sweepAngle;
-      final double newValue = widget.minimumValue! + fraction * (widget.maxiumValue! - widget.minimumValue!);
+      final double newValue = widget.minimumValue! + fraction * (widget.maximumValue! - widget.minimumValue!);
 
-      setState(() {
-        _currentValue = newValue;
-      });
+      _currentValueNotifier.value = newValue;
       widget.onChange(newValue);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: widget.width ?? MediaQuery.of(context).size.width / 1,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          var cWidth = constraints.maxWidth;
-          return Stack(
-            children: [
-              GestureDetector(
-                onPanUpdate: (details) {
-                  final RenderBox box = context.findRenderObject() as RenderBox;
-                  final Offset localPosition = box.globalToLocal(details.globalPosition);
-                  final Size size = box.size;
-                  _updateValue(localPosition, size);
-                },
-                child: Padding(
-                  padding: EdgeInsets.all(cWidth / 20),
-                  child: CustomPaint(
+    return RepaintBoundary(
+      child: SizedBox(
+        width: widget.width ?? MediaQuery.of(context).size.width,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            var cWidth = constraints.maxWidth;
+            return GestureDetector(
+              onPanUpdate: (details) {
+                final RenderBox box = context.findRenderObject() as RenderBox;
+                final Offset localPosition = box.globalToLocal(details.globalPosition);
+                _updateValue(localPosition, box.size);
+              },
+              child: ValueListenableBuilder(
+                valueListenable: _currentValueNotifier,
+                builder: (context, value, _) {
+                  return CustomPaint(
                     painter: ArcSliderPainter(
                       trackColor: widget.trackColor!,
                       trackThickness: widget.trackThickness!,
@@ -88,28 +85,26 @@ class _ArcSliderState extends State<ArcSlider> {
                       thumbColor: widget.thumbColor!,
                       thumbBorderColor: widget.thumbBorderColor!,
                       thumbSize: widget.thumbSize!,
-                      value: _currentValue,
+                      value: value,
                       minValue: widget.minimumValue!,
-                      maxValue: widget.maxiumValue!,
+                      maxValue: widget.maximumValue!,
                       radius: cWidth - (cWidth / 4),
                     ),
-                    size: Size(constraints.maxWidth, constraints.maxWidth / 4),
-                  ),
-                ),
+                    size: Size(cWidth, cWidth / 4),
+                  );
+                },
               ),
-              Positioned(
-                bottom: 0,
-                child: Container(
-                  color: Colors.transparent,
-                  width: MediaQuery.of(context).size.width,
-                  height: cWidth / 10,
-                ),
-              )
-            ],
-          );
-        },
+            );
+          },
+        ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _currentValueNotifier.dispose();
+    super.dispose();
   }
 }
 
@@ -124,6 +119,8 @@ class ArcSliderPainter extends CustomPainter {
   final Color thumbBorderColor;
   final double thumbSize;
   final double radius;
+
+  double? _cachedThumbAngle;
 
   ArcSliderPainter({
     required this.value,
@@ -154,19 +151,21 @@ class ArcSliderPainter extends CustomPainter {
 
     final Paint thumbPaint = Paint()
       ..color = thumbColor
-      ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.fill;
 
     final Paint thumbBorderPaint = Paint()
       ..color = thumbBorderColor
-      ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
 
     const double startAngle = -4.3 * math.pi / 6;
     const double sweepAngle = 2.6 * math.pi / 6;
     final double fraction = (value - minValue) / (maxValue - minValue);
-    final double thumbAngle = startAngle + fraction * sweepAngle;
+    final double thumbAngle = _cachedThumbAngle ?? (startAngle + fraction * sweepAngle);
+
+    if (_cachedThumbAngle == null || _cachedThumbAngle != thumbAngle) {
+      _cachedThumbAngle = thumbAngle;
+    }
 
     final Rect arcRect = Rect.fromCircle(center: Offset(size.width / 2, radius), radius: radius);
     canvas.drawArc(arcRect, startAngle, sweepAngle, false, trackPaint);
@@ -181,5 +180,7 @@ class ArcSliderPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return oldDelegate is! ArcSliderPainter || oldDelegate.value != value;
+  }
 }

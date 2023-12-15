@@ -1,8 +1,6 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:projects/arc_slider/arc_slider.dart';
-import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:the_responsive_builder/the_responsive_builder.dart';
 
 class ArcSliderExample extends StatefulWidget {

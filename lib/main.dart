@@ -11,10 +11,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TheResponsiveBuilder(builder: (context, orientation, screenType) {
-      return MaterialApp(
-        home: HomePage(),
-      );
-    });
+    return TheResponsiveBuilder(
+      builder: (context, orientation, screenType) {
+        return const MaterialApp(
+          home: HomePage(),
+        );
+      },
+    );
   }
 }

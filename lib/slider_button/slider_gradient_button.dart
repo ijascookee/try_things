@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:projects/animated_gradient_text/animated_screen.dart';
 import 'package:projects/slider_button/slider_widget.dart';
@@ -23,22 +21,24 @@ class _SliderGradientButtonState extends State<SliderGradientButton> {
             onDragEnd: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) =>
-                      const AnimatedGradientTextScreen(), // Replace YourNewPage with the actual page you want to navigate to
+                  builder: (context) => const AnimatedGradientTextScreen(),
                 ),
               );
             },
             text: 'Get Started',
             borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(32), bottomLeft: Radius.circular(32)),
+              topLeft: Radius.circular(32),
+              bottomLeft: Radius.circular(32),
+            ),
             textColor: Colors.black,
-            // borderRadius: ,
             icon: const Icon(Icons.star),
             innerGradient: const LinearGradient(colors: [
               Color(0XFFFF0063),
               Color(0XFF19ACFB),
             ]),
-            outerGradient: const LinearGradient(colors: [Colors.white, Colors.white]),
+            outerGradient: const LinearGradient(
+              colors: [Colors.white, Colors.white],
+            ),
           ),
         ),
       ),

@@ -90,9 +90,9 @@ class RegistrationStep {
 
 // Sample data for registration steps
 List<RegistrationStep> registrationSteps = [
-  RegistrationStep(title: "Personal Information", items: [BasicDataForm(), ReligionDataForm(), LocationDataForm()]),
-  RegistrationStep(title: "Family Information", items: [FamilyDataForm()]),
-  RegistrationStep(title: "Partner Preference Information", items: [PersonalDataForm(), EducationDataForm(), AdditionalDataForm()]),
+  RegistrationStep(title: "Personal Information", items: [const BasicDataForm(), const ReligionDataForm(), const LocationDataForm()]),
+  RegistrationStep(title: "Family Information", items: [const FamilyDataForm()]),
+  RegistrationStep(title: "Partner Preference Information", items: [const PersonalDataForm(), const EducationDataForm(), const AdditionalDataForm()]),
 ];
 
 // Below are widgets representing different forms/pages for the registration process.
@@ -102,7 +102,7 @@ class BasicDataForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text("Basic Data Form"));
+    return const Center(child: Text("Basic Data Form"));
   }
 }
 
@@ -111,7 +111,7 @@ class ReligionDataForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text("Religion Data Form"));
+    return const Center(child: Text("Religion Data Form"));
   }
 }
 
@@ -120,7 +120,7 @@ class LocationDataForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text("Location Data Form"));
+    return const Center(child: Text("Location Data Form"));
   }
 }
 
@@ -129,7 +129,7 @@ class FamilyDataForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text("Family Data Form"));
+    return const Center(child: Text("Family Data Form"));
   }
 }
 
@@ -138,7 +138,7 @@ class PersonalDataForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text("Personal Data Form"));
+    return const Center(child: Text("Personal Data Form"));
   }
 }
 
@@ -147,7 +147,7 @@ class EducationDataForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text("Education Data Form"));
+    return const Center(child: Text("Education Data Form"));
   }
 }
 
@@ -156,6 +156,6 @@ class AdditionalDataForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text("Additional Data Form"));
+    return const Center(child: Text("Additional Data Form"));
   }
 }
